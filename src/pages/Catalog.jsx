@@ -97,7 +97,7 @@ export default function Catalog() {
             🎁 Reasonable prices • Limited stock • Bulk orders taken. 
             Auto-prepare your order list at checkout, or order via 
             <a href="tel:+919606315054" style="color: #2563eb; text-decoration: underline;"> Call</a> or 
-            <a href="https://wa.me/919606315054" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline;"> WhatsApp </a>
+            <a href="https://wa.me/919606315054" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline;"> WhatsApp </a> 
             (<strong>9606315054</strong>).
           </p>
         </div>
