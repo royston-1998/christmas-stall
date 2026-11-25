@@ -61,7 +61,7 @@ export default function Catalog() {
       return `•  [ID: ${itemId}] - ${itemName} - ${qty} qty`;
     });
     const text = encodeURIComponent(
-      `Merry Christmas! I'd like to inquire/order these items from the stall:\n\n${lines.join('\n')} \n\nKindly let me know the prices.`
+      `Merry Christmas! I'd like to inquire/order these items from the stall:\n${lines.join('\n')}. \nKindly let me know the prices.`
     );
     window.open(`https://wa.me/919686914264?text=${text}`, '_blank');
   };
@@ -87,17 +87,27 @@ export default function Catalog() {
           <div className="mt-6 max-w-md mx-auto">
             <input
               type="text"
-              placeholder="Search star, santa, decor..."
+              placeholder="Search ornaments, gifts, decor..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-white text-stone-900 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
           </div>
           <p className="text-red-100 mt-3 max-w-xl mx-auto text-sm md:text-base">
-            🎁 Reasonable prices • Limited stock • Bulk orders taken. 
-            Auto-prepare your order list at checkout, or order via 
-            <a href="tel:+919606315054" style="color: #ffffff"> Call</a> or 
-            <a href="https://wa.me/919606315054" target="_blank" rel="noopener noreferrer" style="color: #ffffff"> WhatsApp </a> 
+            🎁 Reasonable prices • Limited stock • Bulk orders taken.{' '}
+            Auto-prepare your order list at checkout, or order via{' '}
+            <a href="tel:+919606315054" style={{ color: '#facc15' }}>
+              Call
+            </a>{' '}
+            or{' '}
+            <a
+              href="https://wa.me/919606315054"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#facc15' }}
+            >
+              WhatsApp
+            </a>{' '}
             (<strong>9606315054</strong>).
           </p>
         </div>
