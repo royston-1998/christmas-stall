@@ -87,7 +87,7 @@ export default function Catalog() {
           <div className="mt-6 max-w-md mx-auto">
             <input
               type="text"
-              placeholder="Search ornaments, gifts, decor..."
+              placeholder="Search star, santa, decor..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-white text-stone-900 placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
