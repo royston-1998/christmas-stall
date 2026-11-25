@@ -61,7 +61,7 @@ export default function Catalog() {
       return `•  [ID: ${itemId}] - ${itemName} - ${qty} qty`;
     });
     const text = encodeURIComponent(
-      `Merry Christmas! I'd like to inquire/order these items from the stall:\n${lines.join('\n')}. \nKindly let me know the prices.`
+      `Merry Christmas! I'd like to inquire/order these items from the stall:\n\n${lines.join('\n')} \n\nKindly let me know the prices.`
     );
     window.open(`https://wa.me/919686914264?text=${text}`, '_blank');
   };
