@@ -74,9 +74,9 @@ export default function Catalog() {
       return `• [ID: ${itemId}] ${itemName} — ${qty} x ₹${unitPrice} = ₹${lineTotal}`;
     });
     const text = encodeURIComponent(
-      `Merry Christmas! I'd like to order these items from the stall:\n\n${lines.join('\n')}\n\nEstimated Total: ₹${totalAmount}`
+      `Merry Christmas! I'd like to order these items from the stall:\n\n${lines.join('\n')}\n\nEstimated Total: ₹${totalAmount}\n\nCan you place this order for me?`
     );
-    window.open(`https://wa.me/919686914264?text=${text}`, '_blank');
+    window.open(`https://wa.me/919606315054?text=${text}`, '_blank');
   };
 
   const normalizedSearch = search.toLowerCase();
