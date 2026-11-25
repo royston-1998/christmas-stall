@@ -134,6 +134,7 @@ export default function Admin() {
     return { ...item, qty };
   });
 
+  const totalUnits = cartEntries.reduce((sum, i) => sum + i.qty, 0);
   const totalAmount = cartEntries.reduce((sum, i) => sum + (i?.price || 0) * i.qty, 0);
   const filtered = items.filter(
     (i) =>
@@ -170,8 +171,71 @@ export default function Admin() {
       </header>
 
       <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Item Lookup & Stock List */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* Clear Inventory Panel: First on mobile, right sticky column on desktop */}
+        <div className="order-first lg:order-last bg-white rounded-2xl border border-stone-200 p-5 h-fit lg:sticky lg:top-20 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+            <h3 className="font-bold text-lg">Clear Inventory</h3>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-stone-100 text-stone-700">
+              {totalUnits} item(s)
+            </span>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-stone-500 mb-1">
+              Customer Name (Optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Leave blank for Walk-in"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="w-full px-3.5 py-2 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-700"
+            />
+          </div>
+
+          {cartEntries.length === 0 ? (
+            <p className="text-sm text-stone-400 py-4 text-center">
+              Select items below to deduct from stock.
+            </p>
+          ) : (
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              {cartEntries.map((item) => (
+                <div key={item.id} className="flex items-center justify-between text-sm gap-2">
+                  <span className="truncate">
+                    {item.qty}x {item.name}
+                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-semibold">₹{item.price * item.qty}</span>
+                    <button
+                      type="button"
+                      onClick={() => updateCart(item, -1)}
+                      className="p-1 rounded bg-stone-100 hover:bg-stone-200 cursor-pointer"
+                      title="Remove one"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="border-t border-stone-100 pt-3 flex justify-between items-center">
+            <span className="text-sm text-stone-500">Reference Total</span>
+            <span className="text-xl font-bold text-stone-900">₹{totalAmount}</span>
+          </div>
+
+          <button
+            disabled={cartEntries.length === 0 || submitting}
+            onClick={handleProceed}
+            className="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:bg-stone-300 text-white font-semibold transition cursor-pointer"
+          >
+            {submitting ? 'Updating Google Sheet...' : 'Proceed & Clear Stock'}
+          </button>
+        </div>
+
+        {/* Item Lookup & Stock List */}
+        <div className="order-last lg:order-first lg:col-span-2 space-y-4">
           <div className="relative">
             <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-3.5" />
             <input
@@ -233,54 +297,6 @@ export default function Admin() {
               );
             })}
           </div>
-        </div>
-
-        {/* Right: Checkout & Stock Deduction Panel */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-5 h-fit sticky top-20 shadow-sm space-y-4">
-          <h3 className="font-bold text-lg border-b border-stone-100 pb-3">Clear Inventory</h3>
-
-          <div>
-            <label className="block text-xs font-medium text-stone-500 mb-1">
-              Customer Name (Optional)
-            </label>
-            <input
-              type="text"
-              placeholder="Leave blank for Walk-in"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="w-full px-3.5 py-2 border border-stone-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-700"
-            />
-          </div>
-
-          {cartEntries.length === 0 ? (
-            <p className="text-sm text-stone-400 py-8 text-center">
-              Select items from the left to deduct from stock.
-            </p>
-          ) : (
-            <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
-              {cartEntries.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm">
-                  <span>
-                    {item.qty}x {item.name}
-                  </span>
-                  <span className="font-semibold">₹{item.price * item.qty}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="border-t border-stone-100 pt-3 flex justify-between items-center">
-            <span className="text-sm text-stone-500">Reference Total</span>
-            <span className="text-xl font-bold text-stone-900">₹{totalAmount}</span>
-          </div>
-
-          <button
-            disabled={cartEntries.length === 0 || submitting}
-            onClick={handleProceed}
-            className="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:bg-stone-300 text-white font-semibold transition cursor-pointer"
-          >
-            {submitting ? 'Updating Google Sheet...' : 'Proceed & Clear Stock'}
-          </button>
         </div>
       </div>
 
