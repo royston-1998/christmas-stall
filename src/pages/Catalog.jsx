@@ -11,7 +11,7 @@ export default function Catalog() {
     fetch('/api/catalog')
       .then((res) => res.json())
       .then((data) => {
-        const fetched = data.items || [];
+        const fetched = Array.isArray(data.items) ? data.items : [];
         setItems(fetched);
 
         // Clamp any existing selections if stock changed
@@ -26,7 +26,12 @@ export default function Catalog() {
           }
           return next;
         });
-
+      })
+      .catch((err) => {
+        console.error('Failed to load catalog:', err);
+        setItems([]);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
@@ -53,23 +58,32 @@ export default function Catalog() {
 
   const selectedCount = Object.values(wishlist).reduce((a, b) => a + b, 0);
 
+  const totalAmount = Object.entries(wishlist).reduce((sum, [id, qty]) => {
+    const item = items.find((i) => String(i.id) === String(id));
+    const unitPrice = Number(item?.price) || 0;
+    return sum + unitPrice * qty;
+  }, 0);
+
   const sendOrderInquiry = () => {
     const lines = Object.entries(wishlist).map(([id, qty]) => {
       const item = items.find((i) => String(i.id) === String(id));
       const itemId = item?.id ?? id;
       const itemName = item?.name ?? 'Item';
-      return `•  [ID: ${itemId}] - ${itemName} - ${qty} qty`;
+      const unitPrice = Number(item?.price) || 0;
+      const lineTotal = unitPrice * qty;
+      return `• [ID: ${itemId}] ${itemName} — ${qty} x ₹${unitPrice} = ₹${lineTotal}`;
     });
     const text = encodeURIComponent(
-      `Merry Christmas! I'd like to inquire/order these items from the stall:\n${lines.join('\n')}. \nKindly let me know the prices.`
+      `Merry Christmas! I'd like to order these items from the stall:\n\n${lines.join('\n')}\n\nEstimated Total: ₹${totalAmount}`
     );
     window.open(`https://wa.me/919686914264?text=${text}`, '_blank');
   };
 
+  const normalizedSearch = search.toLowerCase();
   const filtered = items.filter(
     (i) =>
-      i.name.toLowerCase().includes(search.toLowerCase()) ||
-      i.description.toLowerCase().includes(search.toLowerCase())
+      (i.name || '').toLowerCase().includes(normalizedSearch) ||
+      (i.description || '').toLowerCase().includes(normalizedSearch)
   );
 
   return (
@@ -124,6 +138,7 @@ export default function Catalog() {
               const isAvailable = item.in_stock && maxStock > 0;
               const qty = Math.min(wishlist[item.id] || 0, maxStock);
               const atMaxStock = qty >= maxStock;
+              const price = Number(item.price) || 0;
 
               return (
                 <div
@@ -149,7 +164,12 @@ export default function Catalog() {
 
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-semibold text-lg text-stone-900">{item.name}</h3>
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="font-semibold text-lg text-stone-900">{item.name}</h3>
+                        <span className="shrink-0 font-bold text-lg text-emerald-800">
+                          ₹{price}
+                        </span>
+                      </div>
                       <p className="text-stone-500 text-sm mt-1 leading-relaxed">{item.description}</p>
                     </div>
 
@@ -172,7 +192,7 @@ export default function Catalog() {
                             <Minus className="w-4 h-4" />
                           </button>
                           <span className="font-semibold text-emerald-950 text-sm">
-                            {qty} / {maxStock} Selected
+                            {qty} / {maxStock} Selected (₹{price * qty})
                           </span>
                           <button
                             onClick={() => updateQty(item.id, 1, maxStock)}
@@ -196,8 +216,8 @@ export default function Catalog() {
       {selectedCount > 0 && (
         <div className="fixed bottom-4 inset-x-4 max-w-xl mx-auto bg-stone-900 text-white p-4 rounded-2xl shadow-2xl flex items-center justify-between z-40">
           <div>
-            <p className="text-xs text-stone-400">Selected Items</p>
-            <p className="font-semibold text-base">{selectedCount} item(s) in your list</p>
+            <p className="text-xs text-stone-400">{selectedCount} item(s) selected</p>
+            <p className="font-semibold text-base">Total: ₹{totalAmount}</p>
           </div>
           <button
             onClick={sendOrderInquiry}
