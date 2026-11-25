@@ -23,6 +23,7 @@ export default async function handler(req, res) {
         name: row.get('name'),
         description: row.get('description'),
         image_url: row.get('image_url'),
+        price: Number(row.get('price')) || 0,
         in_stock: stockNum > 0,
         available_stock: stockNum,
       };
